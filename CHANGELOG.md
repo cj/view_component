@@ -2,6 +2,10 @@
 
 ## master
 
+* Add `ViewComponent::I18n` for sidecar translations
+
+    *Elia Schito*
+
 ## 2.23.1
 
 * Fixed out-of-order rendering bug in `ActionView::SlotableV2`
