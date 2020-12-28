@@ -967,7 +967,7 @@ function importAll(r) {
   r.keys().forEach(r)
 }
 
-importAll(require.context("../components", true, /_component.js$/))
+importAll(require.context("../components", true, /[_\/]component.js$/))
 ```
 
 Any file with the `_component.js` suffix (such as `app/components/widget_component.js`) will be compiled into the Webpack bundle. If that file itself imports another file, for example `app/components/widget_component.css`, it will also be compiled and bundled into Webpack's output stylesheet if Webpack is being used for styles.
@@ -1108,9 +1108,42 @@ app/components
 </div>
 ```
 
+##### Translations
+
+In order to support `I18n` translations scoped to the component you can add a dynamic translations loader in `config/locale/components.rb`.
+
+```ruby
+require "view_component/i18n"
+ViewComponent::I18n.load components_root: "#{Rails.root}/app/components", glob: "**/*component.yml"
+```
+
+This allows for adding a "sidecar" YAML file that will define translations
+scoped to the component, e.g. `app/components/greeter/component.yml`:
+
+```yml
+en:
+  hello: "Hello world!"
+```
+
+This will be expanded internally to use the full path of the file as a scope:
+
+```yml
+en:
+  greeting:
+    component:
+      hello: "Hello World!"
+```
+
+The translations will be accessed using the Rails I18n relative notation. The relative notation
+is enabled by adding a leading "dot" to the translation key, e.g. `app/components/greeter/component.html.erb`:
+
+```erb
+<p><%= t(".hello") %></p>
+```
+
 ## Known issues
 
-### form_for compatiblilty
+### form_for compatibility
 
 ViewComponent is [not currently compatible](https://github.com/github/view_component/issues/241) with `form_for` helpers.
 
